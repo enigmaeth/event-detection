@@ -1,7 +1,13 @@
-from dataset import Preprocess
+from TweetHandler import TweetHandler
 
 
 if __name__ == '__main__':
 
-	file = '/media/enigmaeth/My Passport/Datasets/Twitter/tweets dataset/code/1000.json'
-	Preprocess().keyword_for_tweets(file)
+	# file has sorted tweets
+	file = './temp.json'
+	time_1 = 'Thu Oct 11 07:30:50 +0000 2012'
+	time_2 = 'Thu Oct 11 10:30:50 +0000 2012'
+	th = TweetHandler(file)
+	keywords = th.get_keywords(time_1, time_2)
+	for key, val in keywords.items():
+		print(key,': ', val)

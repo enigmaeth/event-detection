@@ -11,9 +11,8 @@ class Preprocess:
 
 	def __init__(self):
 		self.stopwords = [str(word) for word in stopwords.words("english")]
-		self.keyword_frequency = {}
-
-
+		
+		
 	def sort_by_time(self, file):
 		"""
 		"""
@@ -44,11 +43,12 @@ class Preprocess:
 		for time in timestamps:
 			tweets_sorted_by_time += tweets[time]
 
+		# Use "" instead of '' while writing to json
 		with open("sorted1000.json", 'w') as f:
 			f.writelines("%s\n" % str(_) for _ in tweets_sorted_by_time)
 
 
-	def tokenize(self, file_content, file=None):
+	def tokenize(self, file_content):
 		"""
 		Tokenize the content of the word
 		:param file_content: the text content of a file
@@ -86,33 +86,28 @@ class Preprocess:
 		return [unigram, bigram, trigram]
 
 
-	def keyword_for_tweets(self, file):
+	def keyword_for_tweets(self, lines, start_index, end_index):
 		"""
 		"""
-		with open(file, 'r') as f:
-			lines = f.readlines()
+		keyword_frequency = {}
 
-		for line in lines:
+		for line in lines[start_index : end_index+1]:
 			tweet = json.loads(line)
 			id = tweet['id']
 			txt = tweet['full_text']
-			tokens = self.tokenize(txt, file)
+			tokens = self.tokenize(txt)
 			ngrams = self.generate_ngrams(tokens)
 			ngrams[0] = self.stem(ngrams[0])
 			keywords = ngrams[0]
 			file_keywords = [word for word in keywords if word not in self.stopwords]
 			for word in file_keywords:
-				if word not in self.keyword_frequency:
-					self.keyword_frequency[word] = {}
-					self.keyword_frequency[word][id] = 1
+				if word not in keyword_frequency:
+					keyword_frequency[word] = {}
+					keyword_frequency[word][id] = 1
 				else:
-					if id not in self.keyword_frequency[word]:
-						self.keyword_frequency[word][id] = 1
+					if id not in keyword_frequency[word]:
+						keyword_frequency[word][id] = 1
 					else:
-						self.keyword_frequency[word][id] += 1
-
-		for _ in self.keyword_frequency:
-			print(_, self.keyword_frequency[_])
-
-
-
+						keyword_frequency[word][id] += 1
+			
+		return keyword_frequency
