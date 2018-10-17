@@ -30,7 +30,7 @@ class TweetHandler:
 		time_ = datetime.datetime.strptime(time_, '%a %b %d %H:%M:%S %z %Y')
 		i = bisect_right(self.times, time_)
 		if i:
-		    return i-1
+			return i-1
 		raise ValueError
 
 	
